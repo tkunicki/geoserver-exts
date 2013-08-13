@@ -793,21 +793,23 @@ public class Importer implements InitializingBean, DisposableBean {
                         addToCatalog(item, task);
                     }
 
-                    // verify that the newly created featuretype's resource
-                    // has bounding boxes computed - this might be required
-                    // for csv or other uploads that have a geometry that is
-                    // the result of a transform. there may be another way...
-                    FeatureTypeInfo resource = getCatalog().getResourceByName(
-                            featureType.getQualifiedName(), FeatureTypeInfo.class);
-                    if (resource.getNativeBoundingBox().isEmpty()
-                            || resource.getMetadata().get("recalculate-bounds") != null) {
-                        // force computation
-                        CatalogBuilder cb = new CatalogBuilder(getCatalog());
-                        ReferencedEnvelope nativeBounds = cb.getNativeBounds(resource);
-                        resource.setNativeBoundingBox(nativeBounds);
-                        resource.setLatLonBoundingBox(cb.getLatLonBounds(nativeBounds,
-                                resource.getCRS()));
-                        getCatalog().save(resource);
+                    if (!canceled) {
+                        // verify that the newly created featuretype's resource
+                        // has bounding boxes computed - this might be required
+                        // for csv or other uploads that have a geometry that is
+                        // the result of a transform. there may be another way...
+                        FeatureTypeInfo resource = getCatalog().getResourceByName(
+                                featureType.getQualifiedName(), FeatureTypeInfo.class);
+                        if (resource.getNativeBoundingBox().isEmpty()
+                                || resource.getMetadata().get("recalculate-bounds") != null) {
+                            // force computation
+                            CatalogBuilder cb = new CatalogBuilder(getCatalog());
+                            ReferencedEnvelope nativeBounds = cb.getNativeBounds(resource);
+                            resource.setNativeBoundingBox(nativeBounds);
+                            resource.setLatLonBoundingBox(cb.getLatLonBounds(nativeBounds,
+                                    resource.getCRS()));
+                            getCatalog().save(resource);
+                        }
                     }
                 }
                 catch(Exception e) {
