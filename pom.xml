@@ -472,7 +472,7 @@
   <modules>
     <module>csv</module>
     <module>importer</module>
-    <module>monitor-console</module>
+    <module>mapmeter</module>
     <module>printng</module>
     <module>web</module>
     <module>gsr</module>
